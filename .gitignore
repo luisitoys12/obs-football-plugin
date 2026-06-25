@@ -1,0 +1,14 @@
+build/
+*.dll
+*.so
+*.dylib
+*.obj
+*.o
+.vs/
+.vscode/settings.json
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Install*
+*.user
+*.suo
