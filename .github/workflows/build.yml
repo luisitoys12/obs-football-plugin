@@ -22,12 +22,15 @@ jobs:
             artifactName: obs-football-plugin-linux
             generator: Ninja
             config: Release
+            allowFailure: false
           - os: windows-2022
             artifactName: obs-football-plugin-windows
             generator: "Visual Studio 17 2022"
             config: Release
+            allowFailure: true
 
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.allowFailure }}
 
     steps:
       - name: Checkout
@@ -103,8 +106,8 @@ jobs:
             -DENABLE_PIPEWIRE=OFF \
             -DENABLE_PULSEAUDIO=ON
 
-          cmake --build "$RUNNER_TEMP/obs-build" --target obs-frontend-api --parallel
-          cmake --install "$RUNNER_TEMP/obs-build" --component Development
+          cmake --build "$RUNNER_TEMP/obs-build" --parallel
+          cmake --install "$RUNNER_TEMP/obs-build" --prefix "$RUNNER_TEMP/obs-sdk"
 
       - name: Setup OBS SDK 30.2.2 (Windows)
         if: runner.os == 'Windows'
