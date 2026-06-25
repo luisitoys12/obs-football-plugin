@@ -38,9 +38,9 @@ void ScoreBug::Render(const Scoreboard &board, const MatchTimer &timer,
     GetPosition(pos, canvasW, canvasH, x, y);
 
     // Placeholder render hook until full gs_* primitives/text implementation lands.
-    UNUSED(board);
-    UNUSED(timer);
-    UNUSED(colors);
-    UNUSED(x);
-    UNUSED(y);
+    (void)board;
+    (void)timer;
+    (void)colors;
+    (void)x;
+    (void)y;
 }

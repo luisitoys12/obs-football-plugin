@@ -10,7 +10,6 @@
 
 // SettingsDialog — API key, auto-refresh interval, default league
 class SettingsDialog : public QDialog {
-    Q_OBJECT
 public:
     explicit SettingsDialog(QWidget *parent = nullptr) : QDialog(parent)
     {

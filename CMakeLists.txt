@@ -16,6 +16,7 @@ set(CMAKE_AUTORCC ON)
 
 # --- Find Dependencies ---
 find_package(CURL REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 # --- Sources ---
 set(PLUGIN_SOURCES
@@ -59,12 +60,12 @@ target_link_libraries(obs-football-plugin
         Qt6::Widgets
         Qt6::Network
         CURL::libcurl
+        nlohmann_json::nlohmann_json
 )
 
 target_include_directories(obs-football-plugin
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/nlohmann
 )
 
 # --- Install ---

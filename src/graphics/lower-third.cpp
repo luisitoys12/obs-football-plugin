@@ -32,7 +32,7 @@ void LowerThird::Render(const Renderer::ThemeColors &colors,
                         uint32_t canvasW, uint32_t canvasH)
 {
     // Placeholder render hook until full animated lower-third is implemented.
-    UNUSED(colors);
-    UNUSED(canvasW);
-    UNUSED(canvasH);
+    (void)colors;
+    (void)canvasW;
+    (void)canvasH;
 }

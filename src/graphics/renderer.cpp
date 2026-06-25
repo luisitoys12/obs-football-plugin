@@ -1,5 +1,7 @@
 #include "renderer.hpp"
 #include <obs-module.h>
+#include <graphics/vec4.h>
+#include <algorithm>
 #include <string>
 
 bool Renderer::Init(uint32_t w, uint32_t h)
@@ -75,12 +77,54 @@ void Renderer::TriggerGoalAnimation(int teamIndex)
 void Renderer::Tick(float deltaSeconds)
 {
     if (goalTimer > 0.0f) goalTimer -= deltaSeconds;
+    if (lowerThirdTimer > 0.0f) lowerThirdTimer -= deltaSeconds;
 }
 
 void Renderer::Render(const Scoreboard &board, const MatchTimer &timer)
 {
+    UpdateLowerThirdFromEvents(board);
     RenderScoreBug(board, timer);
+    if (lowerThirdTimer > 0.0f) RenderLowerThird();
     if (goalTimer > 0.0f) RenderGoalAnimation();
+}
+
+void Renderer::UpdateLowerThirdFromEvents(const Scoreboard &board)
+{
+    while (processedEvents < board.events.size()) {
+        const MatchEvent &ev = board.events[processedEvents++];
+        lowerThirdSecondary.clear();
+
+        switch (ev.type) {
+        case MatchEvent::Type::Substitution:
+            lowerThirdPrimary = "SUBSTITUTION";
+            lowerThirdSecondary = "IN: " + ev.playerName + " | OUT: " + ev.playerOut;
+            lowerThirdTimer = 5.0f;
+            break;
+        case MatchEvent::Type::Goal:
+            lowerThirdPrimary = "GOOOOL";
+            lowerThirdSecondary = ev.playerName;
+            lowerThirdTimer = 4.0f;
+            break;
+        case MatchEvent::Type::YellowCard:
+            lowerThirdPrimary = "YELLOW CARD";
+            lowerThirdSecondary = ev.playerName;
+            lowerThirdTimer = 4.0f;
+            break;
+        case MatchEvent::Type::RedCard:
+            lowerThirdPrimary = "RED CARD";
+            lowerThirdSecondary = ev.playerName;
+            lowerThirdTimer = 4.0f;
+            break;
+        case MatchEvent::Type::VAR:
+            lowerThirdPrimary = "SUBTITLE";
+            lowerThirdSecondary = ev.playerName;
+            lowerThirdTimer = 6.0f;
+            break;
+        }
+
+        blog(LOG_INFO, "[OBS Football Plugin] Lower-third: %s | %s",
+             lowerThirdPrimary.c_str(), lowerThirdSecondary.c_str());
+    }
 }
 
 void Renderer::RenderScoreBug(const Scoreboard &board, const MatchTimer &timer)
@@ -89,14 +133,43 @@ void Renderer::RenderScoreBug(const Scoreboard &board, const MatchTimer &timer)
     // Placeholder: draws a simple colored rectangle via OBS effect pipeline
     // Final implementation will render:
     //   [LOGO] TEAM_SHORT  SCORE - SCORE  TEAM_SHORT [LOGO]  | MM:SS | PERIOD
-    UNUSED(board);
-    UNUSED(timer);
+    (void)board;
+    (void)timer;
 }
 
 void Renderer::RenderGoalAnimation()
 {
     // TODO (Phase 4): GOOOL flash animation
     // Flashes the bug gold, expands momentarily, shows scorer name
+}
+
+void Renderer::RenderLowerThird()
+{
+    gs_effect_t *effect = obs_get_base_effect(OBS_EFFECT_SOLID);
+    if (!effect)
+        return;
+
+    gs_eparam_t *colorParam = gs_effect_get_param_by_name(effect, "color");
+    if (!colorParam)
+        return;
+
+    const float progress = std::clamp(lowerThirdTimer / 6.0f, 0.0f, 1.0f);
+    const float barW = std::min(900.0f, width * 0.7f);
+    const float barH = 86.0f;
+    const float x = (static_cast<float>(width) - barW) * 0.5f;
+    const float y = static_cast<float>(height) - 150.0f + (1.0f - progress) * 40.0f;
+
+    vec4 rgba;
+    vec4_set(&rgba, 0.07f, 0.09f, 0.18f, 0.82f);
+    gs_effect_set_vec4(colorParam, &rgba);
+
+    gs_matrix_push();
+    gs_matrix_translate3f(x, y, 0.0f);
+    gs_matrix_scale3f(barW, barH, 1.0f);
+    while (gs_effect_loop(effect, "Solid")) {
+        gs_draw_sprite(nullptr, 0, 1, 1);
+    }
+    gs_matrix_pop();
 }
 
 void Renderer::Destroy()

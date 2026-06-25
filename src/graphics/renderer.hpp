@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <cstddef>
 #include <obs-module.h>
 #include "../scoreboard.hpp"
 #include "../timer.hpp"
@@ -37,8 +38,13 @@ private:
     float        goalTimer = 0.0f;
     int          goalTeam  = -1;
     gs_texture_t *renderTarget = nullptr;
+    size_t       processedEvents = 0;
+    float        lowerThirdTimer = 0.0f;
+    std::string  lowerThirdPrimary;
+    std::string  lowerThirdSecondary;
 
     void RenderScoreBug(const Scoreboard &board, const MatchTimer &timer);
+    void UpdateLowerThirdFromEvents(const Scoreboard &board);
     void RenderLowerThird();
     void RenderGoalAnimation();
 
