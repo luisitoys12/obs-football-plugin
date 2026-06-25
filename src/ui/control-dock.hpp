@@ -33,6 +33,8 @@ private slots:
     void OnMatchSelected(int index);
     void OnTimerTick();
     void OnNextPeriod();
+    void OnAddSubstitution();
+    void OnShowSubtitle();
 
 private:
     void SetupUI();
@@ -49,7 +51,12 @@ private:
     QPushButton  *btnGoalAway;
     QPushButton  *btnStartTimer;
     QPushButton  *btnPauseTimer;
+    QPushButton  *btnAddSubstitution;
+    QPushButton  *btnShowSubtitle;
     QComboBox    *cmbMatches;
+    QLineEdit    *txtSubIn;
+    QLineEdit    *txtSubOut;
+    QLineEdit    *txtSubtitle;
     QTimer       *qtTimer;
 
     std::vector<LiveMatch> liveMatches;

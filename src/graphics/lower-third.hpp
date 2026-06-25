@@ -7,6 +7,7 @@ enum class LowerThirdType {
     YellowCard,       // Yellow card + player + minute
     RedCard,          // Red card
     Substitution,     // Player in / player out
+    Subtitle,         // Custom subtitle text
     GoalScorer,       // GOOOL + scorer name
     VAR,              // VAR review
     Lineup,           // Team lineup display

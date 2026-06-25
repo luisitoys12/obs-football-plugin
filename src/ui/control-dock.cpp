@@ -1,9 +1,11 @@
 #include "control-dock.hpp"
 
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QMainWindow>
 #include <QMetaObject>
 #include <QVBoxLayout>
+#include <obs-module.h>
 #include <obs-frontend-api.h>
 
 namespace {
@@ -58,11 +60,19 @@ void ControlDock::SetupUI()
     btnGoalAway = new QPushButton("Goal Away", root);
     btnStartTimer = new QPushButton("Start", root);
     btnPauseTimer = new QPushButton("Pause", root);
+    btnAddSubstitution = new QPushButton("Add Substitution", root);
+    btnShowSubtitle = new QPushButton("Show Subtitle", root);
     auto *btnReset = new QPushButton("Reset", root);
     auto *btnNextPeriod = new QPushButton("Next Period", root);
     auto *btnFetch = new QPushButton("Fetch Live", root);
 
     cmbMatches = new QComboBox(root);
+    txtSubIn = new QLineEdit(root);
+    txtSubOut = new QLineEdit(root);
+    txtSubtitle = new QLineEdit(root);
+    txtSubIn->setPlaceholderText("Player IN");
+    txtSubOut->setPlaceholderText("Player OUT");
+    txtSubtitle->setPlaceholderText("Subtitle text (e.g. GOOOL de Jimenez)");
 
     connect(btnGoalHome, &QPushButton::clicked, this, &ControlDock::OnGoalHome);
     connect(btnGoalAway, &QPushButton::clicked, this, &ControlDock::OnGoalAway);
@@ -71,6 +81,8 @@ void ControlDock::SetupUI()
     connect(btnReset, &QPushButton::clicked, this, &ControlDock::OnResetMatch);
     connect(btnNextPeriod, &QPushButton::clicked, this, &ControlDock::OnNextPeriod);
     connect(btnFetch, &QPushButton::clicked, this, &ControlDock::OnFetchLiveMatches);
+    connect(btnAddSubstitution, &QPushButton::clicked, this, &ControlDock::OnAddSubstitution);
+    connect(btnShowSubtitle, &QPushButton::clicked, this, &ControlDock::OnShowSubtitle);
     connect(cmbMatches, qOverload<int>(&QComboBox::currentIndexChanged),
             this, &ControlDock::OnMatchSelected);
 
@@ -88,6 +100,16 @@ void ControlDock::SetupUI()
     layout->addWidget(btnPauseTimer);
     layout->addWidget(btnReset);
     layout->addWidget(btnNextPeriod);
+
+    auto *subRow = new QHBoxLayout();
+    subRow->addWidget(txtSubIn);
+    subRow->addWidget(txtSubOut);
+    layout->addLayout(subRow);
+    layout->addWidget(btnAddSubstitution);
+
+    layout->addWidget(txtSubtitle);
+    layout->addWidget(btnShowSubtitle);
+
     layout->addWidget(cmbMatches);
     layout->addWidget(btnFetch);
 
@@ -196,4 +218,36 @@ void ControlDock::OnNextPeriod()
 {
     scoreboard->period++;
     RefreshTimerDisplay();
+}
+
+void ControlDock::OnAddSubstitution()
+{
+    const std::string playerIn = txtSubIn->text().trimmed().toStdString();
+    const std::string playerOut = txtSubOut->text().trimmed().toStdString();
+
+    if (playerIn.empty() || playerOut.empty()) {
+        blog(LOG_WARNING, "[OBS Football Plugin] Substitution ignored: missing player names.");
+        return;
+    }
+
+    scoreboard->AddSubstitution(0, playerIn, playerOut, timer->GetMinutes());
+    blog(LOG_INFO, "[OBS Football Plugin] Substitution added: IN=%s OUT=%s min=%d",
+         playerIn.c_str(), playerOut.c_str(), timer->GetMinutes());
+
+    txtSubIn->clear();
+    txtSubOut->clear();
+}
+
+void ControlDock::OnShowSubtitle()
+{
+    const std::string subtitle = txtSubtitle->text().trimmed().toStdString();
+    if (subtitle.empty()) {
+        blog(LOG_WARNING, "[OBS Football Plugin] Subtitle ignored: empty text.");
+        return;
+    }
+
+    // Placeholder behavior: store subtitle as a VAR event text hook for renderer integration.
+    scoreboard->events.push_back({MatchEvent::Type::VAR, subtitle, "", timer->GetMinutes(), 0});
+    blog(LOG_INFO, "[OBS Football Plugin] Subtitle queued: %s", subtitle.c_str());
+    txtSubtitle->clear();
 }
