@@ -23,7 +23,9 @@ void ControlDock::AddToOBS()
 
     g_dock = new ControlDock(mainWindow);
     g_dock->setObjectName("obs-football-control-dock");
-    obs_frontend_add_dock(g_dock);
+    if (!obs_frontend_add_custom_qdock("obs-football-control-dock", g_dock)) {
+        blog(LOG_WARNING, "[OBS Football Plugin] Failed to add custom dock.");
+    }
 }
 
 ControlDock::ControlDock(QWidget *parent)
