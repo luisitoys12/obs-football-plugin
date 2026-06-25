@@ -9,6 +9,17 @@ enum class ScoreBugPos { TopLeft, TopRight, BottomLeft, BottomRight };
 
 class Renderer {
 public:
+    struct ThemeColors {
+        uint32_t bugBackground  = 0xFF1A1A2E; // Dark navy
+        uint32_t bugAccent      = 0xFF16213E; // Deeper navy
+        uint32_t textPrimary    = 0xFFFFFFFF; // White
+        uint32_t textSecondary  = 0xFFCCCCCC; // Light gray
+        uint32_t goalFlash      = 0xFFFFD700; // Gold (Liga MX trophy color)
+        uint32_t scoreColor     = 0xFFFFD700; // Gold score
+        uint32_t timerColor     = 0xFF00FF88; // Green timer
+        uint32_t periodBg       = 0xFF8B0000; // Deep red (Liga MX)
+    };
+
     bool Init(uint32_t width, uint32_t height);
     void Render(const Scoreboard &board, const MatchTimer &timer);
     void Tick(float deltaSeconds);
@@ -32,16 +43,7 @@ private:
     void RenderGoalAnimation();
 
     // Theme colors (Liga MX palette as default)
-    struct ThemeColors {
-        uint32_t bugBackground  = 0xFF1A1A2E; // Dark navy
-        uint32_t bugAccent      = 0xFF16213E; // Deeper navy
-        uint32_t textPrimary    = 0xFFFFFFFF; // White
-        uint32_t textSecondary  = 0xFFCCCCCC; // Light gray
-        uint32_t goalFlash      = 0xFFFFD700; // Gold (Liga MX trophy color)
-        uint32_t scoreColor     = 0xFFFFD700; // Gold score
-        uint32_t timerColor     = 0xFF00FF88; // Green timer
-        uint32_t periodBg       = 0xFF8B0000; // Deep red (Liga MX)
-    } colors;
+    ThemeColors colors;
 
     void ApplyThemeColors();
 };

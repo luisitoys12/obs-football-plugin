@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QTimer>
+#include <vector>
 #include "../scoreboard.hpp"
 #include "../timer.hpp"
 #include "../api-football.hpp"
@@ -16,6 +17,7 @@ class ControlDock : public QDockWidget {
 public:
     static void AddToOBS();
     explicit ControlDock(QWidget *parent = nullptr);
+    ~ControlDock() override;
 
 private slots:
     void OnGoalHome();

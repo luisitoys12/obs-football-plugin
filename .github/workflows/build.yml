@@ -1,34 +1,68 @@
-bmFtZTogQnVpbGQgJiBWYWxpZGF0ZSBPQlMgRm9vdGJhbGwgT3ZlcmxheQoKb246CiAgcHVzaDoK
-ICAgIGJyYW5jaGVzOiBbbWFpbiwgZGV2ZWxvcF0KICBwdWxsX3JlcXVlc3Q6CiAgICBicmFuY2hl
-czogW21haW5dCgpqb2JzOgogIHZhbGlkYXRlLW92ZXJsYXk6CiAgICBuYW1lOiBWYWxpZGF0ZSBX
-ZWIgT3ZlcmxheSAmIENvbnRyb2wgUGFuZWwKICAgIHJ1bnMtb246IHVidW50dS0yMi4wNAoKICAg
-IHN0ZXBzOgogICAgICAtIG5hbWU6IENoZWNrb3V0CiAgICAgICAgdXNlczogYWN0aW9ucy9jaGVj
-a291dEB2NAoKICAgICAgLSBuYW1lOiBTZXR1cCBOb2RlLmpzCiAgICAgICAgdXNlczogYWN0aW9u
-cy9zZXR1cC1ub2RlQHY0CiAgICAgICAgd2l0aDoKICAgICAgICAgIG5vZGUtdmVyc2lvbjogJzIw
-JwogICAgICAgICAgY2FjaGU6ICducG0nCgogICAgICAtIG5hbWU6IEluc3RhbGwgZGVwZW5kZW5j
-aWVzCiAgICAgICAgcnVuOiBucG0gY2kgLS1pZi1wcmVzZW50IHx8IG5wbSBpbnN0YWxsIC0taWYt
-cHJlc2VudAoKICAgICAgLSBuYW1lOiBDaGVjayBvdmVybGF5IGZpbGVzIGV4aXN0CiAgICAgICAg
-cnVuOiB8CiAgICAgICAgICBlY2hvICI9PT0gT3ZlcmxheSBzdHJ1Y3R1cmUgY2hlY2sgPT09IgogICAgICAgICAgdGVzdCAtZiBvdmVybGF5L2luZGV4Lmh0bWwgJiYgZWNobyAi4pyTIG92ZXJsYXkv
-aW5kZXguaHRtbCBmb3VuZCIgfHwgZWNobyAi4piaIG92ZXJsYXkvaW5kZXguaHRtbCBub3QgeWV0
-IGNyZWF0ZWQgKHBlbmRpbmcgZGV2ZWxvcG1lbnQpIgogICAgICAgICAgdGVzdCAtZiBjb250cm9s
-LXBhbmVsL2luZGV4Lmh0bWwgJiYgZWNobyAi4pyTIGNvbnRyb2wtcGFuZWwvaW5kZXguaHRtbCBm
-b3VuZCIgfHwgZWNobyAi4piaIGNvbnRyb2wtcGFuZWwvaW5kZXguaHRtbCBub3QgeWV0IGNyZWF0
-ZWQgKHBlbmRpbmcgZGV2ZWxvcG1lbnQpIgogICAgICAgICAgZWNobyAiQ0kgc3RydWN0dXJlIGNo
-ZWNrIHBhc3NlZCIKCiAgICAgIC0gbmFtZTogVmFsaWRhdGUgSFRNTCBzeW50YXggKG92ZXJsYXkp
-CiAgICAgICAgcnVuOiB8CiAgICAgICAgICBpZiBbIC1mIG92ZXJsYXkvaW5kZXguaHRtbCBdOyB0
-aGVuCiAgICAgICAgICAgIG5weCAtLXllcyBodG1sLXZhbGlkYXRvciBvdmVybGF5L2luZGV4Lmh0
-bWwgLS1xdWlldCAmJiBlY2hvICLwnZKFIG92ZXJsYXkgSFRNTCBpcyB2YWxpZCIgfHwgZWNobyAi
-4pqgIG92ZXJsYXkgSFRNTCBoYXMgd2FybmluZ3MgKG5vbi1ibG9ja2luZykiCiAgICAgICAgICBm
-aQoKICAgICAgLSBuYW1lOiBWYWxpZGF0ZSBKU09OIGNvbmZpZ3MKICAgICAgICBydW46IHwKICAg
-ICAgICAgIGZvciBmIGluICQoZmluZCAuIC1uYW1lICcqLmpzb24nIC1ub3QgLXBhdGggJy4vbm9k
-ZV9tb2R1bGVzLyonKTsgZG8KICAgICAgICAgICAgcHl0aG9uMyAtbSBqc29uLnRvb2wgIiRmIiA+
-IC9kZXYvbnVsbCAmJiBlY2hvICLwnZKFICRmIiB8fCB7IGVjaG8gIuKamsAgSW52YWxpZCBKU09O
-OiAkZiI7IGV4aXQgMTsgfQogICAgICAgICAgZG9uZQoKICAgICAgLSBuYW1lOiBDaGVjayBzZXJ2
-ZXIgc3ludGF4CiAgICAgICAgcnVuOiB8CiAgICAgICAgICBpZiBbIC1mIHNlcnZlci9zZXJ2ZXIu
-anMgXTsgdGhlbgogICAgICAgICAgICBub2RlIC0tY2hlY2sgc2VydmVyL3NlcnZlci5qcyAmJiBlY2hvICLwnZKFIHNlcnZlci9zZXJ2ZXIuanMgc3ludGF4IE9LIgogICAgICAgICAgZmkKCiAgICAgIC0g
-bmFtZTogQnVuZGxlIG92ZXJsYXkgYXJ0aWZhY3QKICAgICAgICBpZjogZ2l0aHViLmV2ZW50X25h
-bWUgPT0gJ3B1c2gnICYmIGdpdGh1Yi5yZWZfbmFtZSA9PSAnbWFpbicKICAgICAgICB1c2VzOiBh
-Y3Rpb25zL3VwbG9hZC1hcnRpZmFjdEB2NAogICAgICAgIHdpdGg6CiAgICAgICAgICBuYW1lOiBv
-YnMtZm9vdGJhbGwtb3ZlcmxheS1idW5kbGUKICAgICAgICAgIHBhdGg6IHwKICAgICAgICAgICAg
-b3ZlcmxheS8KICAgICAgICAgICAgY29udHJvbC1wYW5lbC8KICAgICAgICAgICAgc2VydmVyLwog
-ICAgICAgICAgaWYtbm8tZmlsZXMtZm91bmQ6IHdhcm4K
+name: Build OBS Football Plugin
+
+on:
+  push:
+    branches: [main, develop, fix/**]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-linux:
+    name: Build Linux (CMake + Qt6)
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Qt6
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.6.3"
+          cache: true
+
+      - name: Install build dependencies
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+
+          base_packages=(
+            cmake
+            ninja-build
+            build-essential
+            pkg-config
+            libcurl4-openssl-dev
+            qt6-base-dev
+            qt6-tools-dev
+          )
+
+          obs_packages=()
+          for pkg in libobs-dev obs-studio-dev; do
+            if apt-cache show "$pkg" >/dev/null 2>&1; then
+              obs_packages+=("$pkg")
+            fi
+          done
+
+          if [ "${#obs_packages[@]}" -eq 0 ]; then
+            echo "No OBS development packages found (libobs-dev/obs-studio-dev)."
+            echo "Install OBS dev packages in the runner image or add a setup action for OBS SDK."
+            exit 1
+          fi
+
+          sudo apt-get install -y "${base_packages[@]}" "${obs_packages[@]}"
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: obs-football-plugin-linux
+          path: |
+            build/**/*.so
+            build/**/obs-football-plugin*
+          if-no-files-found: warn
