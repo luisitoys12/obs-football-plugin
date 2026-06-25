@@ -55,15 +55,19 @@ jobs:
             libcurl4-openssl-dev \
             nlohmann-json3-dev \
             libx11-dev \
+            libx11-xcb-dev \
             libxinerama-dev \
             libxcomposite-dev \
             libxdamage-dev \
             libxext-dev \
             libxfixes-dev \
             libxrandr-dev \
+            libxkbcommon-dev \
+            libxkbcommon-x11-dev \
             libgl1-mesa-dev \
             libwayland-dev \
             wayland-protocols \
+            uthash-dev \
             libasound2-dev \
             libpulse-dev \
             libv4l-dev \
@@ -106,11 +110,29 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/obsproject/obs-deps/releases/latest"
+          $asset = $release.assets | Where-Object { $_.name -match '^windows-deps-.*-x64\.zip$' -and $_.name -notmatch 'qt6' } | Select-Object -First 1
+          if (-not $asset) {
+            throw "Unable to locate windows-deps x64 asset from obsproject/obs-deps latest release."
+          }
+
+          $obsDepsZip = "$env:RUNNER_TEMP/obs-deps.zip"
+          $obsDepsDir = "$env:RUNNER_TEMP/obs-deps"
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $obsDepsZip
+          Expand-Archive -Path $obsDepsZip -DestinationPath $obsDepsDir -Force
+          $depsRoot = Get-ChildItem -Path $obsDepsDir -Directory | Select-Object -First 1
+          if (-not $depsRoot) {
+            throw "obs-deps archive extracted without a root directory."
+          }
+
+          "OBS_DEPS_ROOT=$($depsRoot.FullName)" >> $env:GITHUB_ENV
+
           git clone --depth 1 --branch 30.2.2 https://github.com/obsproject/obs-studio.git "$env:RUNNER_TEMP/obs-studio"
 
           cmake -S "$env:RUNNER_TEMP/obs-studio" -B "$env:RUNNER_TEMP/obs-build" `
             -G "Visual Studio 17 2022" -A x64 `
             -DCMAKE_INSTALL_PREFIX="$env:RUNNER_TEMP/obs-sdk" `
+            -DCMAKE_PREFIX_PATH="$($depsRoot.FullName);$($depsRoot.FullName)\\bin" `
             -DCMAKE_BUILD_TYPE=Release `
             -DENABLE_UI=OFF `
             -DENABLE_PLUGINS=OFF `
@@ -137,7 +159,7 @@ jobs:
           cmake -S . -B build `
             -G "${{ matrix.generator }}" -A x64 `
             -DCMAKE_BUILD_TYPE=${{ matrix.config }} `
-            -DCMAKE_PREFIX_PATH="$env:RUNNER_TEMP/obs-sdk"
+            -DCMAKE_PREFIX_PATH="$env:RUNNER_TEMP/obs-sdk;$env:OBS_DEPS_ROOT;$env:OBS_DEPS_ROOT\\bin"
 
       - name: Build plugin (Linux)
         if: runner.os == 'Linux'
