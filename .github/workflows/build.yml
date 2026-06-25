@@ -2,14 +2,32 @@ name: Build OBS Football Plugin
 
 on:
   push:
-    branches: [main, develop, fix/**]
+    branches:
+      - main
+      - develop
+      - fix/**
   pull_request:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
 
 jobs:
-  build-linux:
-    name: Build Linux (CMake + Qt6)
-    runs-on: ubuntu-24.04
+  build:
+    name: Build ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            artifactName: obs-football-plugin-linux
+            generator: Ninja
+            config: Release
+          - os: windows-2022
+            artifactName: obs-football-plugin-windows
+            generator: "Visual Studio 17 2022"
+            config: Release
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -21,48 +39,121 @@ jobs:
           version: "6.6.3"
           cache: true
 
-      - name: Install build dependencies
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
         shell: bash
         run: |
           set -euxo pipefail
           sudo apt-get update
-
-          base_packages=(
-            cmake
-            ninja-build
-            build-essential
-            pkg-config
-            libcurl4-openssl-dev
-            qt6-base-dev
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            ninja-build \
+            pkg-config \
+            git \
+            curl \
+            libcurl4-openssl-dev \
+            libx11-dev \
+            libxinerama-dev \
+            libxcomposite-dev \
+            libxdamage-dev \
+            libxext-dev \
+            libxfixes-dev \
+            libxrandr-dev \
+            libgl1-mesa-dev \
+            libwayland-dev \
+            wayland-protocols \
+            libasound2-dev \
+            libpulse-dev \
+            libv4l-dev \
+            libudev-dev \
+            libavcodec-dev \
+            libavdevice-dev \
+            libavfilter-dev \
+            libavformat-dev \
+            libavutil-dev \
+            libswresample-dev \
+            libswscale-dev \
+            libjansson-dev \
+            libmbedtls-dev \
+            libqt6svg6-dev \
+            qt6-base-dev \
             qt6-tools-dev
-          )
 
-          obs_packages=()
-          for pkg in libobs-dev obs-studio-dev; do
-            if apt-cache show "$pkg" >/dev/null 2>&1; then
-              obs_packages+=("$pkg")
-            fi
-          done
+      - name: Setup OBS SDK 30.2.2 (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          git clone --depth 1 --branch 30.2.2 https://github.com/obsproject/obs-studio.git "$RUNNER_TEMP/obs-studio"
 
-          if [ "${#obs_packages[@]}" -eq 0 ]; then
-            echo "No OBS development packages found (libobs-dev/obs-studio-dev)."
-            echo "Install OBS dev packages in the runner image or add a setup action for OBS SDK."
-            exit 1
-          fi
+          cmake -S "$RUNNER_TEMP/obs-studio" -B "$RUNNER_TEMP/obs-build" \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/obs-sdk" \
+            -DENABLE_UI=OFF \
+            -DENABLE_PLUGINS=OFF \
+            -DENABLE_SCRIPTING=OFF \
+            -DENABLE_BROWSER=OFF \
+            -DENABLE_PIPEWIRE=OFF \
+            -DENABLE_PULSEAUDIO=ON
 
-          sudo apt-get install -y "${base_packages[@]}" "${obs_packages[@]}"
+          cmake --build "$RUNNER_TEMP/obs-build" --target obs-frontend-api --parallel
+          cmake --install "$RUNNER_TEMP/obs-build" --component Development
 
-      - name: Configure
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Setup OBS SDK 30.2.2 (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          git clone --depth 1 --branch 30.2.2 https://github.com/obsproject/obs-studio.git "$env:RUNNER_TEMP/obs-studio"
 
-      - name: Build
-        run: cmake --build build --config Release --parallel
+          cmake -S "$env:RUNNER_TEMP/obs-studio" -B "$env:RUNNER_TEMP/obs-build" `
+            -G "Visual Studio 17 2022" -A x64 `
+            -DCMAKE_INSTALL_PREFIX="$env:RUNNER_TEMP/obs-sdk" `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DENABLE_UI=OFF `
+            -DENABLE_PLUGINS=OFF `
+            -DENABLE_SCRIPTING=OFF `
+            -DENABLE_BROWSER=OFF
 
-      - name: Upload Linux artifact
+          cmake --build "$env:RUNNER_TEMP/obs-build" --target obs-frontend-api --config Release --parallel
+          cmake --install "$env:RUNNER_TEMP/obs-build" --config Release --component Development
+
+      - name: Configure plugin (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cmake -S . -B build \
+            -G "${{ matrix.generator }}" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config }} \
+            -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/obs-sdk"
+
+      - name: Configure plugin (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          cmake -S . -B build `
+            -G "${{ matrix.generator }}" -A x64 `
+            -DCMAKE_BUILD_TYPE=${{ matrix.config }} `
+            -DCMAKE_PREFIX_PATH="$env:RUNNER_TEMP/obs-sdk"
+
+      - name: Build plugin (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: cmake --build build --parallel
+
+      - name: Build plugin (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: cmake --build build --config ${{ matrix.config }} --parallel
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: obs-football-plugin-linux
+          name: ${{ matrix.artifactName }}
           path: |
             build/**/*.so
+            build/**/*.dll
             build/**/obs-football-plugin*
           if-no-files-found: warn
